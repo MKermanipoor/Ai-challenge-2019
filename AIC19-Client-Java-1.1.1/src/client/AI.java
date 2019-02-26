@@ -143,6 +143,7 @@ public class AI {
 
 
                         if (Math.abs((myRowHero - enemyRowHero) + (myColumnHero - enemyColumnHero)) <= 2) {
+                            //// TODO: 2/27/19 bebini kodom hero hpish kamtare ono bezani
                             Direction[] dir = world.getPathMoveDirections(myHero.getCurrentCell(), enemyHero.getCurrentCell(), getMyHeroCells());
 
                             switch (dir[0]){
@@ -161,17 +162,39 @@ public class AI {
 
                             }
 
-
-
                         }
 
+                    }
 
+                }
+            }
+
+            if(myHero.getName()==HeroName.HEALER){
+                // TODO: 2/27/19 mishe olaviat bandi kard vali inam khobe 
+                int heroId=Integer.MAX_VALUE;
+                int hpRatio=Integer.MAX_VALUE;
+                for (Hero needHeroHp:myHeroes){
+                    if(world.manhattanDistance(myHero.getCurrentCell(),needHeroHp.getCurrentCell())<=4) {
+                        int heroHpRaito = needHeroHp.getCurrentHP() / needHeroHp.getMaxHP();
+                        if (heroHpRaito < hpRatio) {
+                            hpRatio = heroHpRaito;
+                            heroId = needHeroHp.getId();
+                        }
 
 
                     }
 
+                }
+                if(heroId!=Integer.MAX_VALUE){
+                if(hpRatio!=1){
+
+                    world.castAbility(heroId,AbilityName.HEALER_HEAL,world.getHero(heroId).getCurrentCell());
+                }
 
                 }
+
+
+
             }
 
 
