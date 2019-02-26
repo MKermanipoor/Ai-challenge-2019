@@ -118,14 +118,74 @@ public class AI {
 
     public void actionTurn(World world) {
         System.out.println("action started");
-        Hero[] heroes = world.getMyHeroes();
+        Hero[] myHeroes = world.getMyHeroes();
         Map map = world.getMap();
 
         int middleRow = 0;
-        for (Hero hero : heroes) {
+        for (Hero hero : myHeroes) {
             middleRow += hero.getCurrentCell().getRow();
 
         }
+
+        //saeid begin
+        Hero[] heroesEnemy =world.getOppHeroes();
+
+        for (Hero myHero:myHeroes){
+            int myRowHero=myHero.getCurrentCell().getRow();
+            int myColumnHero=myHero.getCurrentCell().getColumn();
+            if(myHero.getName()==HeroName.GUARDIAN){
+
+                for (Hero enemyHero:heroesEnemy) {
+                    if (enemyHero.getCurrentCell().getRow() != -1) {
+
+                        int enemyRowHero = enemyHero.getCurrentCell().getRow();
+                        int enemyColumnHero = enemyHero.getCurrentCell().getColumn();
+
+
+                        if (Math.abs((myRowHero - enemyRowHero) + (myColumnHero - enemyColumnHero)) <= 2) {
+                            Direction[] dir = world.getPathMoveDirections(myHero.getCurrentCell(), enemyHero.getCurrentCell(), getMyHeroCells());
+
+                            switch (dir[0]){
+                                case DOWN:
+                                    world.castAbility(myHero,AbilityName.GUARDIAN_ATTACK,myRowHero-1,myColumnHero);
+                                    break;
+                                case UP:
+                                    world.castAbility(myHero,AbilityName.GUARDIAN_ATTACK,myRowHero+1,myColumnHero);
+                                    break;
+                                case LEFT:
+                                    world.castAbility(myHero,AbilityName.GUARDIAN_ATTACK,myRowHero,myColumnHero-1);
+                                    break;
+                                case RIGHT:
+                                    world.castAbility(myHero,AbilityName.GUARDIAN_ATTACK,myRowHero,myColumnHero+1);
+                                    break;
+
+                            }
+
+
+
+                        }
+
+
+
+
+                    }
+
+
+                }
+            }
+
+
+        }
+
+
+        //saeid end
+
+
+
+
+
+
+
     }
 
 }
