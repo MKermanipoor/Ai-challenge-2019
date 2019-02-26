@@ -4,5 +4,5 @@ import client.model.World;
 
 public interface PreArived {
     void moveTurn(World world, preProcess preProcess);
-    void actionTurn(World world);
+    void actionTurn(World world, preProcess preProcess);
 }

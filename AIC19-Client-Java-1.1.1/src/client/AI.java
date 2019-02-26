@@ -28,7 +28,7 @@ public class AI {
             return Values.getWorld().getMap().getObjectiveZone()[0];
         }
     };
-    private PreArived preArived = new PreArivedIMP();
+    private PreArived preArived;
 
     public void preProcess(World world) {
 
@@ -51,6 +51,7 @@ public class AI {
                 break;
             case 3:
                 world.pickHero(HeroName.HEALER);
+                preArived = new PreArivedIMP();
                 break;
         }
         pickTurnCount++;
@@ -71,6 +72,7 @@ public class AI {
 
     public void actionTurn(World world) {
         System.out.println("action started");
+        preArived.actionTurn(world, preProcess);
     }
 
 }
