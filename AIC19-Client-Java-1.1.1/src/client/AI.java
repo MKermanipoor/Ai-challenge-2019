@@ -1,45 +1,19 @@
 package client;
 
+import client.logicAI.PreArived;
+import client.logicAI.PreArivedIMP;
+import client.logicAI.Values;
 import client.logicAI.preProcess;
-import client.model.*;
+import client.model.Cell;
+import client.model.HeroName;
+import client.model.World;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Random;
-import java.util.function.BiConsumer;
 
 public class AI {
 
     private Random random = new Random();
-
-    private World world;
-
-    public static String TANK_1 = "tank01";
-    public static String TANK_2 = "tank02";
-    public static String HEALER_1 = "healer01";
-    public static String HEALER_2 = "healer02";
-    private java.util.Map<String, Integer> heroMap = new HashMap<>();
-
-    private String getHeroTag(Integer id){
-        final String[] result = new String[1];
-        heroMap.forEach(new BiConsumer<String, Integer>() {
-            @Override
-            public void accept(String s, Integer integer) {
-                if (id.intValue() == integer.intValue()){
-                      result[0] = s;
-                }
-            }
-        });
-        return result[0];
-    }
-
-    private List<Cell> getMyHeroCells(){
-        List<Cell> result = new ArrayList<>();
-        for (Hero hero:world.getMyHeroes())
-            result.add(hero.getCurrentCell());
-        return result;
-    }
 
 
     // TODO: 2/25/2019 create new object
@@ -51,9 +25,10 @@ public class AI {
 
         @Override
         public Cell getBestLocation(String hero) {
-            return world.getMap().getObjectiveZone()[0];
+            return Values.getWorld().getMap().getObjectiveZone()[0];
         }
     };
+    private PreArived preArived = new PreArivedIMP();
 
     public void preProcess(World world) {
 
@@ -81,51 +56,21 @@ public class AI {
         pickTurnCount++;
     }
 
-    boolean isValidData = false;
+    boolean first = false;
+
     public void moveTurn(World world) {
         System.out.println("move started");
-        this.world = world;
-        Hero[] heroes = world.getMyHeroes();
+        if (!first)
+            Values.initial(world);
 
-        if (!isValidData){
-            for (Hero hero:heroes){
-                if (hero.getName() == HeroName.GUARDIAN){
-                    if (heroMap.containsKey(TANK_1)){
-                        heroMap.put(TANK_2, hero.getId());
-                    }else {
-                        heroMap.put(TANK_1, hero.getId());
-                    }
-                }else if(hero.getName() == HeroName.HEALER){
-                    if (heroMap.containsKey(HEALER_1)){
-                        heroMap.put(HEALER_2, hero.getId());
-                    }else{
-                        heroMap.put(HEALER_1, hero.getId());
-                    }
-                }
-            }
-            isValidData = true;
-        }
+        preArived.moveTurn(world, preProcess);
 
-        for (Hero hero : heroes){
-            Direction[] dir = world.getPathMoveDirections(hero.getCurrentCell(), preProcess.getBestLocation(getHeroTag(hero.getId())), getMyHeroCells());
-            System.out.println(dir.length);
-            if (dir.length > 0)
-                world.moveHero(hero, dir[0]);
-        }
     }
 
     boolean firstGorize = false;
 
     public void actionTurn(World world) {
         System.out.println("action started");
-        Hero[] heroes = world.getMyHeroes();
-        Map map = world.getMap();
-
-        int middleRow = 0;
-        for (Hero hero : heroes) {
-            middleRow += hero.getCurrentCell().getRow();
-
-        }
     }
 
 }
