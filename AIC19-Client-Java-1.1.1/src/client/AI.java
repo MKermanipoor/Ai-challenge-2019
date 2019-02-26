@@ -118,6 +118,9 @@ public class AI {
 
     public void actionTurn(World world) {
         System.out.println("action started");
+
+        Hero[] heroesEnemy =world.getOppHeroes();
+
         Hero[] myHeroes = world.getMyHeroes();
         Map map = world.getMap();
 
@@ -128,7 +131,6 @@ public class AI {
         }
 
         //saeid begin
-        Hero[] heroesEnemy =world.getOppHeroes();
 
         for (Hero myHero:myHeroes){
             int myRowHero=myHero.getCurrentCell().getRow();
@@ -161,7 +163,8 @@ public class AI {
                                     break;
 
                             }
-
+                            //in break bara ine ke vaghti ability ro estefade kard for time hadar nade
+                            break;
                         }
 
                     }
@@ -170,7 +173,8 @@ public class AI {
             }
 
             if(myHero.getName()==HeroName.HEALER){
-                // TODO: 2/27/19 mishe olaviat bandi kard vali inam khobe 
+                //begin of ability for heal
+                // TODO: 2/27/19 mishe olaviat bandi kard vali inam khobe
                 int heroId=Integer.MAX_VALUE;
                 int hpRatio=Integer.MAX_VALUE;
                 for (Hero needHeroHp:myHeroes){
@@ -192,10 +196,27 @@ public class AI {
                 }
 
                 }
+                //end of ability for heal
+
+                //begin of ability for attack
+                for(Hero enemyHero:heroesEnemy){
+
+                    if(enemyHero.getCurrentCell().getRow()!=-1){
+                        if(world.manhattanDistance(myHero.getCurrentCell(),enemyHero.getCurrentCell())<=4){
+                            world.castAbility(myHero,AbilityName.HEALER_ATTACK,enemyHero.getCurrentCell());
+                            break;
+                        }
 
 
+                    }
+
+                }
+
+
+                //end of ability for attack
 
             }
+
 
 
         }
