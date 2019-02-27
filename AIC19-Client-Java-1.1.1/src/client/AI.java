@@ -132,10 +132,7 @@ public class AI {
 
         //saeid begin for counter attack
 
-//        System.out.println(heroes[0]);
-//        System.out.println(heroes[1]);
-//        System.out.println(heroes[2]);
-//        System.out.println(heroes[3]);
+
 
 
         int i = 0;
@@ -171,7 +168,7 @@ public class AI {
                         if (world.manhattanDistance(hero.getCurrentCell(), enemyHero.getCurrentCell()) <= 5) {
 
                             endCellforCounterAttack[i] = enemyHero.getCurrentCell();
-                            
+
 
                         }
 
@@ -196,7 +193,7 @@ public class AI {
                     if ((endCellforCounterAttack[i].getRow() == hero.getCurrentCell().getRow()) && (endCellforCounterAttack[i].getColumn() == hero.getCurrentCell().getColumn())) {
                         countEachCounter[i]++;
 
-
+                        //// TODO: 2/27/19 ehtemale inke bere jelo be onja berese attack nazane bargarde hast
                         System.out.println("counter move finished");
 
                         Cell tempCell = startCellforCounterAttack[i];
