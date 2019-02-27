@@ -144,10 +144,11 @@ public class AI {
                         int enemyColumnHero = enemyHero.getCurrentCell().getColumn();
 
 
-                        if (Math.abs((myRowHero - enemyRowHero) + (myColumnHero - enemyColumnHero)) <= 2) {
+                       // if (Math.abs((myRowHero - enemyRowHero) + (myColumnHero - enemyColumnHero)) <= 2) {
+                        if(world.manhattanDistance(myHero.getCurrentCell(),enemyHero.getCurrentCell())<=2){
                             //// TODO: 2/27/19 bebini kodom hero hpish kamtare ono bezani
                             Direction[] dir = world.getPathMoveDirections(myHero.getCurrentCell(), enemyHero.getCurrentCell(), getMyHeroCells());
-
+                            System.out.println("guardian attack");
                             switch (dir[0]){
                                 case DOWN:
                                     world.castAbility(myHero,AbilityName.GUARDIAN_ATTACK,myRowHero-1,myColumnHero);
@@ -191,7 +192,7 @@ public class AI {
                 }
                 if(heroId!=Integer.MAX_VALUE){
                 if(hpRatio!=1){
-
+                    System.out.println("healer heal");
                     world.castAbility(heroId,AbilityName.HEALER_HEAL,world.getHero(heroId).getCurrentCell());
                 }
 
@@ -199,19 +200,27 @@ public class AI {
                 //end of ability for heal
 
                 //begin of ability for attack
+                 heroId=Integer.MAX_VALUE;
+                 hpRatio=Integer.MAX_VALUE;
                 for(Hero enemyHero:heroesEnemy){
-
                     if(enemyHero.getCurrentCell().getRow()!=-1){
+                        int enemyHpRatio=enemyHero.getCurrentHP()/enemyHero.getMaxHP();
                         if(world.manhattanDistance(myHero.getCurrentCell(),enemyHero.getCurrentCell())<=4){
-                            world.castAbility(myHero,AbilityName.HEALER_ATTACK,enemyHero.getCurrentCell());
-                            break;
+                            if(enemyHpRatio<hpRatio){
+                                hpRatio=enemyHpRatio;
+                                heroId=enemyHero.getId();
+                            }
+
                         }
 
 
                     }
 
                 }
-
+                if(heroId!=Integer.MAX_VALUE) {
+                    System.out.println("healer attack");
+                    world.castAbility(myHero, AbilityName.HEALER_ATTACK,world.getHero(heroId).getCurrentCell());
+                }
 
                 //end of ability for attack
 
