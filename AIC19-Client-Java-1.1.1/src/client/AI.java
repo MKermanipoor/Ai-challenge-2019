@@ -143,11 +143,19 @@ public class AI {
             if(hero.getName()==HeroName.GUARDIAN){
 //            if(!isCounter[i]){
 //                isCounter[i]=true;
+                
+                
+//            if(endCellforCounterAttack!=null){
+//                
+//                
+//            }    
+                
             if (countEachCounter[i] == -1) {
                 countEachCounter[i] = 0;
                 isFristCellValid[i] = false;
                 isEndCellvalid[i] = false;
             }
+            //// TODO: 2/27/19   bebin in if e hamishe ejra she chi mishe
             if (!isFristCellValid[i] && !isEndCellvalid[i]) {
 
                 // TODO: 2/27/19 cell target bayad jaygozari she
@@ -157,25 +165,28 @@ public class AI {
                 // TODO: 2/27/19 cell target bayad jaygozari she
                 endCellforCounterAttack[i] = hero.getCurrentCell();
                 for (Hero enemyHero : heroesEnemy) {
-                    // TODO: 2/27/19 behine she
-                    if (world.manhattanDistance(hero.getCurrentCell(), enemyHero.getCurrentCell()) <= 5) {
+                    if (enemyHero.getCurrentCell().getRow() != -1) {
 
-                        endCellforCounterAttack[i] = enemyHero.getCurrentCell();
+                        // TODO: 2/27/19 behine she
+                        if (world.manhattanDistance(hero.getCurrentCell(), enemyHero.getCurrentCell()) <= 5) {
+
+                            endCellforCounterAttack[i] = enemyHero.getCurrentCell();
+                            
+
+                        }
+
 
                     }
 
 
+                    isEndCellvalid[i] = true;
+                    isFristCellValid[i] = true;
+
                 }
-
-
-                isEndCellvalid[i] = true;
-                isFristCellValid[i] = true;
-
-
             }
             if (isFristCellValid[i] && isEndCellvalid[i]) {
                 if (countMoveCounter < 4) {
-                    //   TODO: 2/27/19 cell target bayad jaygozari she
+                    //   DO: 2/27/19 cell target bayad jaygozari she
                     if((hero.getCurrentCell().getRow()!=endCellforCounterAttack[i].getRow())&&(hero.getCurrentCell().getColumn()!=endCellforCounterAttack[i].getColumn())) {
                         Direction[] counterDir = world.getPathMoveDirections(hero.getCurrentCell(), endCellforCounterAttack[i], getMyHeroCells());
                         world.moveHero(hero, counterDir[0]);
