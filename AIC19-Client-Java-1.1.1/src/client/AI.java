@@ -93,6 +93,7 @@ public class AI {
     int countMoveCounter =0;
     boolean isCounter[]={false,false,false,false};
     int countEachCounter[]={-1,-1,-1,-1};
+    int action[]={0,0,0,0};
 
     //saeid end
 
@@ -186,6 +187,7 @@ public class AI {
                     //   DO: 2/27/19 cell target bayad jaygozari she
                     if((hero.getCurrentCell().getRow()!=endCellforCounterAttack[i].getRow())&&(hero.getCurrentCell().getColumn()!=endCellforCounterAttack[i].getColumn())) {
                         Direction[] counterDir = world.getPathMoveDirections(hero.getCurrentCell(), endCellforCounterAttack[i], getMyHeroCells());
+                        if(action[i]==0)
                         world.moveHero(hero, counterDir[0]);
                     }
 
@@ -193,9 +195,10 @@ public class AI {
                     if ((endCellforCounterAttack[i].getRow() == hero.getCurrentCell().getRow()) && (endCellforCounterAttack[i].getColumn() == hero.getCurrentCell().getColumn())) {
                         countEachCounter[i]++;
 
-                        //// TODO: 2/27/19 ehtemale inke bere jelo be onja berese attack nazane bargarde hast
+                        //// TODO: 2/27/19 ehtemale inke bere jelo be onja berese attack nazane bargarde hast. ye action ezafe kardam  hala bayad moghei ke ghahreman harif ham tekon mikhore on action yekam taghir kone
                         System.out.println("counter move finished");
 
+                        action[i]=1;
                         Cell tempCell = startCellforCounterAttack[i];
                         startCellforCounterAttack[i] = endCellforCounterAttack[i];
                         endCellforCounterAttack[i] = tempCell;
@@ -227,6 +230,12 @@ public class AI {
     boolean firstGorize = false;
 
     public void actionTurn(World world) {
+
+        //baraye inke bade action betone harekat kone
+        for (int i:action){
+            i=0;
+        }
+
         countMoveCounter=0;
         System.out.println("action started");
 
