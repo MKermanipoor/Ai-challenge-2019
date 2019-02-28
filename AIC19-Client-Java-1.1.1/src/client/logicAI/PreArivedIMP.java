@@ -1,6 +1,7 @@
 package client.logicAI;
 
 import client.model.Cell;
+import client.model.Direction;
 import client.model.Hero;
 import client.model.World;
 
