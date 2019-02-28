@@ -1,9 +1,6 @@
 package client.logicAI;
 
-import client.model.Cell;
-import client.model.Direction;
-import client.model.Hero;
-import client.model.World;
+import client.model.*;
 
 import java.util.*;
 
@@ -91,6 +88,16 @@ public class PreArivedIMP implements PreArived {
             System.out.println(hero.getCurrentCell());
             System.out.println(best);
         }
+    }
+
+    @Override
+    public boolean isAried(World world, PreProcess preProcess) {
+
+        for (Hero hero:world.getMyHeroes()){
+            if (hero.getName() == HeroName.HEALER && !hero.getCurrentCell().equals(preProcess.getBestLocation(Values.getHeroTag(hero.getId()))))
+                return false;
+        }
+        return true;
     }
 
     public boolean checkMode(World world, PreProcess preProcess){

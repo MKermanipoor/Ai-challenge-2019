@@ -32,8 +32,7 @@ public class actionModeIMP implements ActionMode {
                         if(world.manhattanDistance(myHero.getCurrentCell(),enemyHero.getCurrentCell())<=2){
                             //// TODO: 2/27/19 bebini kodom hero hpish kamtare ono bezani
 
-                            // TODO: 2/28/19 on chizi ke masoud kos mige
-                            Direction[] dir = world.getPathMoveDirections(myHero.getCurrentCell(), enemyHero.getCurrentCell());
+                            Direction[] dir = world.getPathMoveDirections(myHero.getCurrentCell(), enemyHero.getCurrentCell(), Values.getMyHeroCells(world));
                             System.out.println("guardian attack");
                             if(dir.length==0){
                                 world.castAbility(myHero, AbilityName.GUARDIAN_ATTACK,myHero.getCurrentCell());
@@ -155,7 +154,7 @@ public class actionModeIMP implements ActionMode {
                     if (enemyHero.getCurrentCell().getRow() != -1) {
 
                         if (world.manhattanDistance(myHero.getCurrentCell(), enemyHero.getCurrentCell()) > (myHero.getAbility(AbilityName.GUARDIAN_ATTACK).getRange()+myHero.getAbility(AbilityName.GUARDIAN_ATTACK).getAreaOfEffect() )) {
-
+                            System.out.println((myHero.getAbility(AbilityName.GUARDIAN_ATTACK).getRange()+ " \t " + myHero.getAbility(AbilityName.GUARDIAN_ATTACK).getAreaOfEffect()));
 
 
                             if(heroEnemyCounterid==Integer.MAX_VALUE){
