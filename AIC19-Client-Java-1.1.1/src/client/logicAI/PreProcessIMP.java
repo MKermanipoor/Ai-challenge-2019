@@ -76,8 +76,8 @@ public class PreProcessIMP implements PreProcess {
 //            }
             secondBestCell=checkIsWallMin(firstBestCell,1);
             //Tonk
-            Cell firstTonk = checkIsWallMax(firstBestCell,  2);
-            Cell secondTonk = checkIsWallMax(secondBestCell,2);
+            Cell firstTonk = checkIsWallMax(firstBestCell,  1);
+            Cell secondTonk = checkIsWallMax(secondBestCell,1);
             //hasVariable
             cellLocation.put(Values.HEALER_1, firstBestCell);
             cellLocation.put(Values.HEALER_2, secondBestCell);
