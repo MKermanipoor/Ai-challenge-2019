@@ -1,20 +1,44 @@
 package client;
 
-import client.logicAI.*;
-import client.model.HeroName;
-import client.model.World;
+import client.logicAI.ActionMode;
+import client.logicAI.actionModeIMP;
+import client.logicAI.preProcess;
+import client.model.*;
 
 import java.util.Random;
 
 public class AI {
-    int pickTurnCount = 0;
-    private HeroName pickHeroName[]={
-            HeroName.HEALER,
-            HeroName.GUARDIAN,
-            HeroName.GUARDIAN,
-            HeroName.HEALER,
-    };
+
+    private ActionMode actionMode = new actionModeIMP();
+
     private Random random = new Random();
+
+
+    public static String TANK_1 = "tank01";
+    public static String TANK_2 = "tank02";
+    public static String HEALER_1 = "healer01";
+    public static String HEALER_2 = "healer02";
+    private java.util.Map<String, Integer> heroMap = new HashMap<>();
+
+    private String getHeroTag(Integer id){
+        final String[] result = new String[1];
+        heroMap.forEach(new BiConsumer<String, Integer>() {
+            @Override
+            public void accept(String s, Integer integer) {
+                if (id.intValue() == integer.intValue()){
+                    result[0] = s;
+                }
+            }
+        });
+        return result[0];
+    }
+
+    private List<Cell> getMyHeroCells(){
+        List<Cell> result = new ArrayList<>();
+        for (Hero hero:world.getMyHeroes())
+            result.add(hero.getCurrentCell());
+        return result;
+    }
 
 
     // TODO: 2/25/2019 create new object
@@ -51,22 +75,88 @@ public class AI {
         }
     }
 
-    boolean first = false;
+    boolean isValidData = false;
+
+    //saeid start
+
+
+
+
+    int countMoveCounter =0;
+
+
+
+
+    //saeid end
 
     public void moveTurn(World world) {
+
+
+        countMoveCounter++;
+
         System.out.println("move started");
         if (!first)
             Values.initial(world);
 
-        preArived.moveTurn(world, preProcess);
+
+        if (!isValidData) {
+            for (Hero hero : heroes) {
+                if (hero.getName() == HeroName.GUARDIAN) {
+                    if (heroMap.containsKey(TANK_1)) {
+                        heroMap.put(TANK_2, hero.getId());
+                    } else {
+                        heroMap.put(TANK_1, hero.getId());
+                    }
+                } else if (hero.getName() == HeroName.HEALER) {
+                    if (heroMap.containsKey(HEALER_1)) {
+                        heroMap.put(HEALER_2, hero.getId());
+                    } else {
+                        heroMap.put(HEALER_1, hero.getId());
+                    }
+                }
+            }
+            isValidData = true;
+        }
+
+        for (Hero hero : heroes) {
+            Direction[] dir = world.getPathMoveDirections(hero.getCurrentCell(), preProcess.getBestLocation(getHeroTag(hero.getId())), getMyHeroCells());
+            System.out.println(dir.length);
+            if (dir.length > 0)
+                world.moveHero(hero, dir[0]);
+        }
+
+        actionMode.moveTurn(world);
+
+
+
 
     }
 
     boolean firstGorize = false;
 
     public void actionTurn(World world) {
+
+
+
+
+        countMoveCounter=0;
         System.out.println("action started");
-        preArived.actionTurn(world, preProcess);
+
+
+        Map map = world.getMap();
+
+
+
+        actionMode.actionTurn(world);
+
+
+
+
+
+
+
     }
+
+
 
 }
