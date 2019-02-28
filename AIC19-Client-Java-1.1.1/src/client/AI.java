@@ -86,14 +86,14 @@ public class AI {
     //saeid start
 
 
-    boolean isFristCellValid[]={false,false,false,false};
+
     boolean isEndCellvalid[]={false,false,false,false};
-    Cell startCellforCounterAttack[]=new Cell[4];
     Cell endCellforCounterAttack[]=new Cell[4];
+
     int countMoveCounter =0;
-    boolean isCounter[]={false,false,false,false};
-    int countEachCounter[]={-1,-1,-1,-1};
-    int action[]={0,0,0,0};
+
+
+
 
     //saeid end
 
@@ -131,87 +131,64 @@ public class AI {
                 world.moveHero(hero, dir[0]);
         }
 
+
         //saeid begin for counter attack
 
 
-
-
         int i = 0;
-        for (Hero hero : heroes) {
-            if(hero.getName()==HeroName.GUARDIAN){
-//            if(!isCounter[i]){
-//                isCounter[i]=true;
-                
-                
-//            if(endCellforCounterAttack!=null){
-//                
-//                
-//            }    
-                
-            if (countEachCounter[i] == -1) {
-                countEachCounter[i] = 0;
-                isFristCellValid[i] = false;
-                isEndCellvalid[i] = false;
-            }
-            //// TODO: 2/27/19   bebin in if e hamishe ejra she chi mishe
-            if (!isFristCellValid[i] && !isEndCellvalid[i]) {
+        int heroEnemyCounterid=Integer.MAX_VALUE;
+        for (Hero myHero : heroes) {
 
-                // TODO: 2/27/19 cell target bayad jaygozari she
-                //Direction[] counterDir= world.getPathMoveDirections(hero.getCurrentCell(),hero.getCurrentCell(),getMyHeroCells());
+            if(myHero.getName()==HeroName.GUARDIAN){
 
-                startCellforCounterAttack[i] = hero.getCurrentCell();
-                // TODO: 2/27/19 cell target bayad jaygozari she
-                endCellforCounterAttack[i] = hero.getCurrentCell();
+
+
+
+                endCellforCounterAttack[i] = myHero.getCurrentCell();
                 for (Hero enemyHero : heroesEnemy) {
+
                     if (enemyHero.getCurrentCell().getRow() != -1) {
 
-                        // TODO: 2/27/19 behine she
-                        if (world.manhattanDistance(hero.getCurrentCell(), enemyHero.getCurrentCell()) <= 5) {
+                       if (world.manhattanDistance(myHero.getCurrentCell(), enemyHero.getCurrentCell()) > (myHero.getAbility(AbilityName.GUARDIAN_ATTACK).getRange()+myHero.getAbility(AbilityName.GUARDIAN_ATTACK).getAreaOfEffect() )) {
 
-                            endCellforCounterAttack[i] = enemyHero.getCurrentCell();
 
+
+                            if(heroEnemyCounterid==Integer.MAX_VALUE){
+
+                                heroEnemyCounterid=enemyHero.getId();
+                            }
+                            else {
+                                if(world.getPathMoveDirections(myHero.getCurrentCell(),enemyHero.getCurrentCell()).length<world.getPathMoveDirections(myHero.getCurrentCell(),world.getHero(heroEnemyCounterid).getCurrentCell()).length){
+                                    heroEnemyCounterid=enemyHero.getId();
+
+
+                                }
+
+                            }
 
                         }
-
-
                     }
 
+            }
+                if(heroEnemyCounterid!=Integer.MAX_VALUE) {
+                    endCellforCounterAttack[i] = world.getHero(heroEnemyCounterid).getCurrentCell();
 
-                    isEndCellvalid[i] = true;
-                    isFristCellValid[i] = true;
 
                 }
-            }
-            if (isFristCellValid[i] && isEndCellvalid[i]) {
-                if (countMoveCounter < 4) {
+                int correntAp=world.getAP();
+                int counterAttackAp=2*myHero.getAbility(AbilityName.GUARDIAN_ATTACK).getAPCost();
+                int moveCounterAttackAp=myHero.getMoveAPCost();
+                if (correntAp-counterAttackAp >= moveCounterAttackAp) {
                     //   DO: 2/27/19 cell target bayad jaygozari she
-                    if((hero.getCurrentCell().getRow()!=endCellforCounterAttack[i].getRow())&&(hero.getCurrentCell().getColumn()!=endCellforCounterAttack[i].getColumn())) {
-                        Direction[] counterDir = world.getPathMoveDirections(hero.getCurrentCell(), endCellforCounterAttack[i], getMyHeroCells());
-                        if(action[i]==0)
-                        world.moveHero(hero, counterDir[0]);
-                    }
+                    if((myHero.getCurrentCell().getRow()!=endCellforCounterAttack[i].getRow())&&(myHero.getCurrentCell().getColumn()!=endCellforCounterAttack[i].getColumn())) {
+                        Direction[] counterDir = world.getPathMoveDirections(myHero.getCurrentCell(), endCellforCounterAttack[i], getMyHeroCells());
 
-                } else {
-                    if ((endCellforCounterAttack[i].getRow() == hero.getCurrentCell().getRow()) && (endCellforCounterAttack[i].getColumn() == hero.getCurrentCell().getColumn())) {
-                        countEachCounter[i]++;
 
-                        //// TODO: 2/27/19 ehtemale inke bere jelo be onja berese attack nazane bargarde hast. ye action ezafe kardam  hala bayad moghei ke ghahreman harif ham tekon mikhore on action yekam taghir kone
-                        System.out.println("counter move finished");
-
-                        action[i]=1;
-                        Cell tempCell = startCellforCounterAttack[i];
-                        startCellforCounterAttack[i] = endCellforCounterAttack[i];
-                        endCellforCounterAttack[i] = tempCell;
-                        if (countEachCounter[i] == 2) {
-                            countEachCounter[i] = -1;
-                        }
+                            world.moveHero(myHero, counterDir[0]);
 
                     }
 
                 }
-
-
-            }
 
 
         }
@@ -231,10 +208,8 @@ public class AI {
 
     public void actionTurn(World world) {
 
-        //baraye inke bade action betone harekat kone
-        for (int i:action){
-            i=0;
-        }
+
+
 
         countMoveCounter=0;
         System.out.println("action started");
@@ -363,19 +338,6 @@ public class AI {
 
     }
 
-    public Cell getTargetCell(Hero hero,int manhatan){
 
-        switch (manhatan){
-            case 5:if(world.getMap().getCell(hero.getCurrentCell().getRow()-2,hero.getCurrentCell().getColumn()).isWall()==false)
-                return world.getMap().getCell(hero.getCurrentCell().getRow()-2,hero.getCurrentCell().getColumn());
-                    if(world.getMap().getCell(hero.getCurrentCell().getRow(),hero.getCurrentCell().getColumn()).isWall()==false)
-                        return world.getMap().getCell(hero.getCurrentCell().getRow(),hero.getCurrentCell().getColumn());
-                    break;
-
-
-        }
-
-        return null;
-    }
 
 }
