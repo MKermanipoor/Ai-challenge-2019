@@ -172,7 +172,14 @@ public class actionModeIMP implements ActionMode {
                             }
 
                         }
-                    }
+                        //if (world.manhattanDistance(myHero.getCurrentCell(), enemyHero.getCurrentCell()) <(myHero.getAbility(AbilityName.GUARDIAN_ATTACK).getRange()+myHero.getAbility(AbilityName.GUARDIAN_ATTACK).getAreaOfEffect() ))
+                        else  {
+                            endCellforCounterAttack[i]=myHero.getCurrentCell();
+
+
+                        }
+
+                        }
 
                 }
                 if(heroEnemyCounterid!=Integer.MAX_VALUE) {
