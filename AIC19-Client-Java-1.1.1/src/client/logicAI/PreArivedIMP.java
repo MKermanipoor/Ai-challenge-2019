@@ -1,7 +1,6 @@
 package client.logicAI;
 
 import client.model.Cell;
-import client.model.Direction;
 import client.model.Hero;
 import client.model.World;
 
@@ -9,7 +8,7 @@ import java.util.*;
 
 public class PreArivedIMP implements PreArived {
 
-    private List<Hero> getSortedHeroWithPathLength(World world, preProcess destinations){
+    private List<Hero> getSortedHeroWithPathLength(World world, PreProcess destinations){
         Collection<Hero> t =new PriorityQueue<>(new Comparator<Hero>() {
             @Override
             public int compare(Hero o1, Hero o2) {
@@ -23,7 +22,7 @@ public class PreArivedIMP implements PreArived {
     }
 
     @Override
-    public void moveTurn(World world, preProcess preProcess) {
+    public void moveTurn(World world, PreProcess preProcess) {
         Hero[] heroes = world.getMyHeroes();
         int remainingAp = world.getAP();
         if (!checkMode(world, preProcess)){
@@ -38,7 +37,7 @@ public class PreArivedIMP implements PreArived {
     }
 
     @Override
-    public void actionTurn(World world, preProcess preProcess) {
+    public void actionTurn(World world, PreProcess preProcess) {
         Hero hero = getSortedHeroWithPathLength(world, preProcess).get(3);
         int range = hero.getDodgeAbilities()[0].getRange();
         Cell best = null;
@@ -63,7 +62,7 @@ public class PreArivedIMP implements PreArived {
             world.castAbility(hero, hero.getDodgeAbilities()[0], best);
     }
 
-    public boolean checkMode(World world, preProcess preProcess){
+    public boolean checkMode(World world, PreProcess preProcess){
         for (Hero hero:world.getMyHeroes()){
             if (world.manhattanDistance(hero.getCurrentCell(), preProcess.getBestLocation(Values.getHeroTag(hero.getId()))) > 0)
                 return false;
