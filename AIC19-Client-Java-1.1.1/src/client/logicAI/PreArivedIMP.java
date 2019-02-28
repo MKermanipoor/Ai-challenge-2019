@@ -30,7 +30,7 @@ public class PreArivedIMP implements PreArived {
             remainingAp -= getSortedHeroWithPathLength(world, preProcess).get(3).getDodgeAbilities()[0].getAPCost();
         }
         for (Hero hero : heroes){
-            Direction[] directions = world.getPathMoveDirections(hero.getCurrentCell(), preProcess.getBestLocation(Values.getHeroTag(hero.getId())));
+            Direction[] directions = world.getPathMoveDirections(hero.getCurrentCell(), preProcess.getBestLocation(Values.getHeroTag(hero.getId())), Values.getMyHeroCells());
             if (directions.length == 0) {
                 System.out.println("Aried");
                 continue;
