@@ -1,49 +1,72 @@
 package client;
 
-import client.model.*;
+import client.logicAI.*;
+import client.model.HeroName;
+import client.model.World;
 
 import java.util.Random;
 
-public class AI
-{
-
+public class AI {
+    int pickTurnCount = 0;
+    private HeroName pickHeroName[]={
+            HeroName.HEALER,
+            HeroName.GUARDIAN,
+            HeroName.GUARDIAN,
+            HeroName.HEALER,
+    };
     private Random random = new Random();
 
-    public void preProcess(World world)
-    {
+
+    // TODO: 2/25/2019 create new object
+    private PreProcess preProcess;
+    private PreArived preArived;
+
+    public void preProcess(World world) {
+
         System.out.println("pre process started");
+        preProcess = new PreProcessIMP(world);
     }
 
-    public void pickTurn(World world)
-    {
-        System.out.println("pick started");
-        world.pickHero(HeroName.BLASTER);
-    }
-
-    public void moveTurn(World world)
-    {
-        System.out.println("move started");
-        Hero[] heroes = world.getMyHeroes();
-
-        for (Hero hero : heroes)
-        {
-            if (!world.getMap().getCell(hero.getCurrentCell().getRow() + 1, hero.getCurrentCell().getColumn()).isWall())
-                world.moveHero(hero, Direction.UP);
-            world.moveHero(hero, Direction.values()[random.nextInt(4)]);
+    public void pickTurn(World world) {
+//        switch (pickTurnCount) {
+//            case 0:
+//                world.pickHero(HeroName.HEALER);
+//                break;
+//            case 1:
+//                world.pickHero(HeroName.GUARDIAN);
+//                break;
+//            case 2:
+//                world.pickHero(HeroName.GUARDIAN);
+//                break;
+//            case 3:
+//                world.pickHero(HeroName.HEALER);
+//                preArived = new PreArivedIMP();
+//                break;
+//        }
+        world.pickHero(pickHeroName[pickTurnCount]);
+        pickTurnCount++;
+        System.out.println("pick number : "+pickTurnCount);
+        if(pickTurnCount==pickHeroName.length){
+            preArived = new PreArivedIMP();
         }
     }
+
+    boolean first = false;
+
+    public void moveTurn(World world) {
+        System.out.println("move started");
+        if (!first)
+            Values.initial(world);
+
+        preArived.moveTurn(world, preProcess);
+
+    }
+
+    boolean firstGorize = false;
 
     public void actionTurn(World world) {
         System.out.println("action started");
-        Hero[] heroes = world.getMyHeroes();
-        Map map = world.getMap();
-        for (Hero hero : heroes)
-        {
-            int row = random.nextInt(map.getRowNum());
-            int column = random.nextInt(map.getColumnNum());
-
-            world.castAbility(hero, hero.getAbilities()[random.nextInt(3)], row, column);
-        }
+        preArived.actionTurn(world, preProcess);
     }
 
 }

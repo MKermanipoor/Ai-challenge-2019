@@ -4,6 +4,7 @@ import client.model.Cell;
 
 import java.util.HashMap;
 
-public interface preProcess {
-    HashMap<Integer,Cell> getBestLocation();//hero id , best location cell
+public interface PreProcess {
+    HashMap<String ,Cell> getBestLocation();//hero tag , best location cell
+    Cell getBestLocation(String hero);//hero tag , best location cell
 }
