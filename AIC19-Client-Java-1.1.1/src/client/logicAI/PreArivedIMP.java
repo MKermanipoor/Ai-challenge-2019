@@ -1,8 +1,10 @@
 package client.logicAI;
 
 import client.model.*;
+import client.model.Map;
 
 import java.util.*;
+import java.util.function.Consumer;
 
 public class PreArivedIMP implements PreArived {
 
@@ -23,6 +25,9 @@ public class PreArivedIMP implements PreArived {
     public void moveTurn(World world, PreProcess preProcess) {
         Hero[] heroes = world.getMyHeroes();
         int remainingAp = world.getAP();
+        Set<Integer> movedHero = new HashSet<>();
+        List<Cell> isBlocked  = Values.getMyHeroCells(world);
+
         if (!checkMode(world, preProcess)){
             remainingAp -= getSortedHeroWithPathLength(world, preProcess).get(3).getDodgeAbilities()[0].getAPCost();
         }
@@ -35,11 +40,22 @@ public class PreArivedIMP implements PreArived {
                 continue;
             }
             if (remainingAp >= hero.getMoveAPCost()) {
+                remainingAp -= hero.getMoveAPCost();
+                movedHero.add(hero.getId());
+                isBlocked.remove(hero.getCurrentCell());
                 world.moveHero(hero, directions[0]);
                 System.out.println("***************\n" + Values.getHeroTag(hero.getId()) + "\t" + directions[0] + "\n***************\n");
-                remainingAp -= hero.getMoveAPCost();
             }
         }
+
+        movedHero.forEach(new Consumer<Integer>() {
+            @Override
+            public void accept(Integer integer) {
+                Hero hero = world.getHero(integer);
+                Direction d = world.getPathMoveDirections(hero.getCurrentCell(), preProcess.getBestLocation(Values.getHeroTag(integer)), isBlocked)[0];
+                world.moveHero(hero, d);
+            }
+        });
     }
 
     @Override
