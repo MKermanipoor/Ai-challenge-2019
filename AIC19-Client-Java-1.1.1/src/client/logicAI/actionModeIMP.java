@@ -86,7 +86,7 @@ public class actionModeIMP implements ActionMode {
                 if(heroId!=Integer.MAX_VALUE && hpRatio!=1){
 
                     System.out.println("healer heal");
-                    world.castAbility(heroId,AbilityName.HEALER_HEAL,world.getHero(heroId).getCurrentCell());
+                    world.castAbility(myHero,AbilityName.HEALER_HEAL,world.getHero(heroId).getCurrentCell());
 
 
                 }
