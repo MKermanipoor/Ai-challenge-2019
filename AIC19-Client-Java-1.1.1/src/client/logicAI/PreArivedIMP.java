@@ -13,8 +13,8 @@ public class PreArivedIMP implements PreArived {
         Collection<Hero> t =new PriorityQueue<>(new Comparator<Hero>() {
             @Override
             public int compare(Hero o1, Hero o2) {
-                int a = world.getPathMoveDirections(o1.getCurrentCell(), destinations.getBestLocation(Values.getHeroTag(o1.getId()))).length;
-                int b = world.getPathMoveDirections(o2.getCurrentCell(), destinations.getBestLocation(Values.getHeroTag(o2.getId()))).length;
+                int a = world.getPathMoveDirections(o1.getCurrentCell(), destinations.getBestLocation(Values.getHeroTag(o1.getId())), Values.getMyHeroCells(world)).length;
+                int b = world.getPathMoveDirections(o2.getCurrentCell(), destinations.getBestLocation(Values.getHeroTag(o2.getId())), Values.getMyHeroCells(world)).length;
                 return a-b;
             }
         });
@@ -30,13 +30,16 @@ public class PreArivedIMP implements PreArived {
             remainingAp -= getSortedHeroWithPathLength(world, preProcess).get(3).getDodgeAbilities()[0].getAPCost();
         }
         for (Hero hero : heroes){
-            Direction[] directions = world.getPathMoveDirections(hero.getCurrentCell(), preProcess.getBestLocation(Values.getHeroTag(hero.getId())), Values.getMyHeroCells());
+            if (Values.getMyHeroCells(world).size() != 4)
+                System.out.print("\n************\n\n\nerror !!!!!\n************\n\n\n");
+            Direction[] directions = world.getPathMoveDirections(hero.getCurrentCell(), preProcess.getBestLocation(Values.getHeroTag(hero.getId())), Values.getMyHeroCells(world));
             if (directions.length == 0) {
-                System.out.println("Aried");
+                System.out.println(Values.getHeroTag(hero.getId()) + "Aried");
                 continue;
             }
             if (remainingAp >= hero.getMoveAPCost()) {
                 world.moveHero(hero, directions[0]);
+                System.out.println("***************\n" + Values.getHeroTag(hero.getId()) + "\t" + directions[0] + "\n***************\n");
                 remainingAp -= hero.getMoveAPCost();
             }
         }

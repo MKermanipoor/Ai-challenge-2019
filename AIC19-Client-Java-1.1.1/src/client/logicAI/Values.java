@@ -31,7 +31,7 @@ public abstract class Values {
         return result[0];
     }
 
-    public static List<Cell> getMyHeroCells() {
+    public static List<Cell> getMyHeroCells(World world) {
         List<Cell> result = new ArrayList<>();
         for (Hero hero : world.getMyHeroes())
             result.add(hero.getCurrentCell());

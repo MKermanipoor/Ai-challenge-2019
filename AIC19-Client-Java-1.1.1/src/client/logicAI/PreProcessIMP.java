@@ -76,8 +76,8 @@ public class PreProcessIMP implements PreProcess {
 //            }
             secondBestCell=checkIsWallMin(firstBestCell,1);
             //Tonk
-            Cell firstTonk = checkIsWallMax(firstBestCell,  1);
-            Cell secondTonk = checkIsWallMax(secondBestCell,1);
+            Cell firstTonk = checkIsWallMax(firstBestCell,  2);
+            Cell secondTonk = checkIsWallMax(secondBestCell,2);
             //hasVariable
             cellLocation.put(Values.HEALER_1, firstBestCell);
             cellLocation.put(Values.HEALER_2, secondBestCell);
@@ -171,7 +171,7 @@ public class PreProcessIMP implements PreProcess {
     }
 
     private boolean checkCell(Cell cellBy) {
-        return cellBy.isInObjectiveZone()&&!inUseCell.contains(cellBy);
+        return cellBy != null && cellBy.isInObjectiveZone()&&!inUseCell.contains(cellBy);
     }
 
     private Cell getCellBy(Cell goalCell, int row, int column) {
