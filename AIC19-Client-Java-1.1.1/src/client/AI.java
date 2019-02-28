@@ -1,5 +1,7 @@
 package client;
 
+import client.logicAI.ActionMode;
+import client.logicAI.actionModeIMP;
 import client.logicAI.preProcess;
 import client.model.*;
 
@@ -10,6 +12,8 @@ import java.util.Random;
 import java.util.function.BiConsumer;
 
 public class AI {
+
+    private ActionMode actionMode = new actionModeIMP();
 
     private Random random = new Random();
 
@@ -87,8 +91,6 @@ public class AI {
 
 
 
-    boolean isEndCellvalid[]={false,false,false,false};
-    Cell endCellforCounterAttack[]=new Cell[4];
 
     int countMoveCounter =0;
 
@@ -98,12 +100,14 @@ public class AI {
     //saeid end
 
     public void moveTurn(World world) {
+
+
         countMoveCounter++;
 
         System.out.println("move started");
         this.world = world;
         Hero[] heroes = world.getMyHeroes();
-        Hero[] heroesEnemy = world.getOppHeroes();
+
 
         if (!isValidData) {
             for (Hero hero : heroes) {
@@ -131,74 +135,8 @@ public class AI {
                 world.moveHero(hero, dir[0]);
         }
 
+        actionMode.moveTurn(world);
 
-        //saeid begin for counter attack
-
-
-        int i = 0;
-        int heroEnemyCounterid=Integer.MAX_VALUE;
-        for (Hero myHero : heroes) {
-
-            if(myHero.getName()==HeroName.GUARDIAN){
-
-
-
-
-                endCellforCounterAttack[i] = myHero.getCurrentCell();
-                for (Hero enemyHero : heroesEnemy) {
-
-                    if (enemyHero.getCurrentCell().getRow() != -1) {
-
-                       if (world.manhattanDistance(myHero.getCurrentCell(), enemyHero.getCurrentCell()) > (myHero.getAbility(AbilityName.GUARDIAN_ATTACK).getRange()+myHero.getAbility(AbilityName.GUARDIAN_ATTACK).getAreaOfEffect() )) {
-
-
-
-                            if(heroEnemyCounterid==Integer.MAX_VALUE){
-
-                                heroEnemyCounterid=enemyHero.getId();
-                            }
-                            else {
-                                if(world.getPathMoveDirections(myHero.getCurrentCell(),enemyHero.getCurrentCell()).length<world.getPathMoveDirections(myHero.getCurrentCell(),world.getHero(heroEnemyCounterid).getCurrentCell()).length){
-                                    heroEnemyCounterid=enemyHero.getId();
-
-
-                                }
-
-                            }
-
-                        }
-                    }
-
-            }
-                if(heroEnemyCounterid!=Integer.MAX_VALUE) {
-                    endCellforCounterAttack[i] = world.getHero(heroEnemyCounterid).getCurrentCell();
-
-
-                }
-                int correntAp=world.getAP();
-                int counterAttackAp=2*myHero.getAbility(AbilityName.GUARDIAN_ATTACK).getAPCost();
-                int moveCounterAttackAp=myHero.getMoveAPCost();
-                if (correntAp-counterAttackAp >= moveCounterAttackAp) {
-                    //   DO: 2/27/19 cell target bayad jaygozari she
-                    if((myHero.getCurrentCell().getRow()!=endCellforCounterAttack[i].getRow())&&(myHero.getCurrentCell().getColumn()!=endCellforCounterAttack[i].getColumn())) {
-                        Direction[] counterDir = world.getPathMoveDirections(myHero.getCurrentCell(), endCellforCounterAttack[i], getMyHeroCells());
-
-
-                            world.moveHero(myHero, counterDir[0]);
-
-                    }
-
-                }
-
-
-        }
-        i++;
-    }
-
-
-
-
-        //saeid end for counter attack
 
 
 
@@ -214,121 +152,12 @@ public class AI {
         countMoveCounter=0;
         System.out.println("action started");
 
-        Hero[] heroesEnemy =world.getOppHeroes();
 
-        Hero[] myHeroes = world.getMyHeroes();
         Map map = world.getMap();
 
-        int middleRow = 0;
-        for (Hero hero : myHeroes) {
-            middleRow += hero.getCurrentCell().getRow();
-
-        }
-
-        //saeid begin
-
-        //begin of guardian attack
-        for (Hero myHero:myHeroes){
-            int myRowHero=myHero.getCurrentCell().getRow();
-            int myColumnHero=myHero.getCurrentCell().getColumn();
-            if(myHero.getName()==HeroName.GUARDIAN){
-
-                for (Hero enemyHero:heroesEnemy) {
-                    if (enemyHero.getCurrentCell().getRow() != -1) {
-
-                        int enemyRowHero = enemyHero.getCurrentCell().getRow();
-                        int enemyColumnHero = enemyHero.getCurrentCell().getColumn();
 
 
-                        // if (Math.abs((myRowHero - enemyRowHero) + (myColumnHero - enemyColumnHero)) <= 2) {
-                        if(world.manhattanDistance(myHero.getCurrentCell(),enemyHero.getCurrentCell())<=2){
-                            //// TODO: 2/27/19 bebini kodom hero hpish kamtare ono bezani
-                            Direction[] dir = world.getPathMoveDirections(myHero.getCurrentCell(), enemyHero.getCurrentCell(), getMyHeroCells());
-                            System.out.println("guardian attack");
-                            switch (dir[0]){
-                                case DOWN:
-                                    world.castAbility(myHero,AbilityName.GUARDIAN_ATTACK,myRowHero-1,myColumnHero);
-                                    break;
-                                case UP:
-                                    world.castAbility(myHero,AbilityName.GUARDIAN_ATTACK,myRowHero+1,myColumnHero);
-                                    break;
-                                case LEFT:
-                                    world.castAbility(myHero,AbilityName.GUARDIAN_ATTACK,myRowHero,myColumnHero-1);
-                                    break;
-                                case RIGHT:
-                                    world.castAbility(myHero,AbilityName.GUARDIAN_ATTACK,myRowHero,myColumnHero+1);
-                                    break;
-
-                            }
-                            //in break bara ine ke vaghti ability ro estefade kard for time hadar nade
-                            //break;
-                        }
-
-                    }
-
-                }
-                //end of guardian attack
-            }
-
-            if(myHero.getName()==HeroName.HEALER){
-                //begin of ability for heal
-                // TODO: 2/27/19 mishe olaviat bandi kard vali inam khobe
-                int heroId=Integer.MAX_VALUE;
-                int hpRatio=Integer.MAX_VALUE;
-                for (Hero needHeroHp:myHeroes){
-                    if(world.manhattanDistance(myHero.getCurrentCell(),needHeroHp.getCurrentCell())<=4) {
-                        int heroHpRaito = needHeroHp.getCurrentHP() / needHeroHp.getMaxHP();
-                        if (heroHpRaito < hpRatio) {
-                            hpRatio = heroHpRaito;
-                            heroId = needHeroHp.getId();
-                        }
-
-
-                    }
-
-                }
-                if(heroId!=Integer.MAX_VALUE){
-                    if(hpRatio!=1){
-                        System.out.println("healer heal");
-                        world.castAbility(heroId,AbilityName.HEALER_HEAL,world.getHero(heroId).getCurrentCell());
-                    }
-
-                }
-                //end of ability for heal
-
-                //begin of ability for attack
-                heroId=Integer.MAX_VALUE;
-                hpRatio=Integer.MAX_VALUE;
-                for(Hero enemyHero:heroesEnemy){
-                    if(enemyHero.getCurrentCell().getRow()!=-1){
-                        int enemyHpRatio=enemyHero.getCurrentHP()/enemyHero.getMaxHP();
-                        if(world.manhattanDistance(myHero.getCurrentCell(),enemyHero.getCurrentCell())<=4){
-                            if(enemyHpRatio<hpRatio){
-                                hpRatio=enemyHpRatio;
-                                heroId=enemyHero.getId();
-                            }
-
-                        }
-
-
-                    }
-
-                }
-                if(heroId!=Integer.MAX_VALUE) {
-                    System.out.println("healer attack");
-                    world.castAbility(myHero, AbilityName.HEALER_ATTACK,world.getHero(heroId).getCurrentCell());
-                }
-
-                //end of ability for attack
-
-            }
-
-
-
-        }
-
-
-        //saeid end
+        actionMode.actionTurn(world);
 
 
 
