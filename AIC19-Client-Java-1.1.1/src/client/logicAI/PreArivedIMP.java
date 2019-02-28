@@ -15,7 +15,7 @@ public class PreArivedIMP implements PreArived {
             public int compare(Hero o1, Hero o2) {
                 int a = world.getPathMoveDirections(o1.getCurrentCell(), destinations.getBestLocation(Values.getHeroTag(o1.getId()))).length;
                 int b = world.getPathMoveDirections(o2.getCurrentCell(), destinations.getBestLocation(Values.getHeroTag(o2.getId()))).length;
-                return b-a;
+                return a-b;
             }
         });
         t.addAll(Arrays.asList(world.getMyHeroes()));
@@ -39,28 +39,50 @@ public class PreArivedIMP implements PreArived {
 
     @Override
     public void actionTurn(World world, preProcess preProcess) {
-        Hero hero = getSortedHeroWithPathLength(world, preProcess).get(3);
+        System.out.println(world.getAP());
+        Hero hero = null;
+        for(Hero h:getSortedHeroWithPathLength(world, preProcess)){
+            if (h.getDodgeAbilities()[0].isReady())
+                hero = h;
+        }
+        if (hero == null)
+            return;
+
         int range = hero.getDodgeAbilities()[0].getRange();
         Cell best = null;
         Cell target = preProcess.getBestLocation(Values.getHeroTag(hero.getId()));
-        int distance = Integer.MAX_VALUE;
+        int distance = world.getPathMoveDirections(hero.getCurrentCell(), target).length;
         for(int i = -range ; i <= range ; i++){
             int temp = range - Math.abs(i);
             for (int j = -temp ; j <= temp ; j++){
+//                if (Math.abs(i + j) == 1)
+//                    continue;
                 int row = hero.getCurrentCell().getRow() + i;
                 int column = hero.getCurrentCell().getColumn() + j;
+                Cell cell = world.getMap().getCell(row, column);
                 if (!world.getMap().isInMap(row, column))
                     continue;
-                if (world.getMap().getCell(row, column).isWall())
+                if (cell.isWall())
                     continue;
-                if (world.manhattanDistance(target, world.getMap().getCell(row, column)) < distance){
-                    distance = world.manhattanDistance(target, world.getMap().getCell(row, column));
-                    best = world.getMap().getCell(row, column);
+                if (world.getMyHero(row, column) != null)
+                    continue;
+                if (world.getPathMoveDirections(target, cell).length < distance){
+                    distance = world.manhattanDistance(target, cell);
+                    best = cell;
+                }
+                if (world.getPathMoveDirections(target, cell).length == distance &&
+                        !cell.isInVision()){
+                    best = cell;
                 }
             }
         }
-        if (best != null)
+        if (best != null) {
             world.castAbility(hero, hero.getDodgeAbilities()[0], best);
+            System.out.println("Jump");
+            System.out.println(hero.getName());
+            System.out.println(hero.getCurrentCell());
+            System.out.println(best);
+        }
     }
 
     public boolean checkMode(World world, preProcess preProcess){
