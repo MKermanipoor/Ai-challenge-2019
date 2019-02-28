@@ -37,7 +37,7 @@ public class PreArivedIMP implements PreArived {
     }
 
     @Override
-    public void actionTurn(World world, preProcess preProcess) {
+    public void actionTurn(World world, PreProcess preProcess) {
         System.out.println(world.getAP());
         Hero hero = null;
         for(Hero h:getSortedHeroWithPathLength(world, preProcess)){

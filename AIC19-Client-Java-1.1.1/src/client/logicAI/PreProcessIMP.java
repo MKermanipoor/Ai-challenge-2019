@@ -4,8 +4,10 @@ import client.model.Cell;
 import client.model.Map;
 import client.model.World;
 
+import java.security.Key;
 import java.util.HashMap;
 import java.util.Random;
+import java.util.Set;
 
 public class PreProcessIMP implements PreProcess {
     private HashMap<String, Cell> cellLocation = new HashMap<>();
@@ -44,8 +46,9 @@ public class PreProcessIMP implements PreProcess {
                 Cell workCell = goalCell[i];
                 int d = getDistance(workCell);
                 distanceHashMap.put(workCell, d);
-                if (distance < d) {
+                if (distance > d) {
                     firstBestCell = workCell;
+                    distance=d;
                 }
             }
             Cell secondBestCell = null;
@@ -86,10 +89,18 @@ public class PreProcessIMP implements PreProcess {
             cellLocation.put(Values.HEALER_2, secondBestCell);
             cellLocation.put(Values.TANK_1, firstTonk);
             cellLocation.put(Values.TANK_2, secondTonk);
-
+            printHash();
         }
         return cellLocation;
 
+    }
+
+    private void printHash() {
+        Set<String> keys=cellLocation.keySet();
+        for (String key :
+                keys) {
+            System.out.println(key+" in :( "+cellLocation.get(key).getRow()+" , "+cellLocation.get(key).getColumn()+" )");
+        }
     }
 
     private Cell checkIsWall(Cell secondBestCell) {
@@ -98,16 +109,16 @@ public class PreProcessIMP implements PreProcess {
             for (int j = 1; j < 5; j++) {
                 for (int i = j; i > 0; i--) {
                     int k = j - i;
-                    if (!getCellBy(secondBestCell, i, k).isWall()) {
+                    if (getCellBy(secondBestCell, i, k).isInObjectiveZone()) {
                         secondBestCell = getCellBy(secondBestCell, i, k);
                         break findHelarLocation;
-                    } else if (!getCellBy(secondBestCell, -i, k).isWall()) {
+                    } else if (getCellBy(secondBestCell, -i, k).isInObjectiveZone()) {
                         secondBestCell = getCellBy(secondBestCell, -i, k);
                         break findHelarLocation;
-                    } else if (!getCellBy(secondBestCell, i, -k).isWall()) {
+                    } else if (getCellBy(secondBestCell, i, -k).isInObjectiveZone()) {
                         secondBestCell = getCellBy(secondBestCell, i, -k);
                         break findHelarLocation;
-                    } else if (!getCellBy(secondBestCell, -i, -k).isWall()) {
+                    } else if (getCellBy(secondBestCell, -i, -k).isInObjectiveZone()) {
                         secondBestCell = getCellBy(secondBestCell, -i, -k);
                         break findHelarLocation;
                     }
