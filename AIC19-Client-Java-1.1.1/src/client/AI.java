@@ -1,11 +1,11 @@
 package client;
 
-import client.logicAI.ActionMode;
-import client.logicAI.actionModeIMP;
-import client.logicAI.preProcess;
+import client.logicAI.*;
 import client.model.*;
 
+import java.util.HashMap;
 import java.util.Random;
+
 
 public class AI {
     int pickTurnCount = 0;
@@ -26,26 +26,6 @@ public class AI {
     public static String HEALER_1 = "healer01";
     public static String HEALER_2 = "healer02";
     private java.util.Map<String, Integer> heroMap = new HashMap<>();
-
-    private String getHeroTag(Integer id){
-        final String[] result = new String[1];
-        heroMap.forEach(new BiConsumer<String, Integer>() {
-            @Override
-            public void accept(String s, Integer integer) {
-                if (id.intValue() == integer.intValue()){
-                      result[0] = s;
-                }
-            }
-        });
-        return result[0];
-    }
-
-    private List<Cell> getMyHeroCells(){
-        List<Cell> result = new ArrayList<>();
-        for (Hero hero:world.getMyHeroes())
-            result.add(hero.getCurrentCell());
-        return result;
-    }
 
 
     // TODO: 2/25/2019 create new object
@@ -87,7 +67,7 @@ public class AI {
     public void moveTurn(World world) {
 
 
-        countMoveCounter++;
+
 
         System.out.println("move started");
         if (!first)
@@ -95,7 +75,7 @@ public class AI {
 
         preArived.moveTurn(world, preProcess);
 
-        actionMode.moveTurn(world);
+        //actionMode.moveTurn(world);
     }
 
     boolean firstGorize = false;
@@ -105,7 +85,7 @@ public class AI {
 
 
 
-        countMoveCounter=0;
+
         System.out.println("action started");
         preArived.actionTurn(world, preProcess);
     }
