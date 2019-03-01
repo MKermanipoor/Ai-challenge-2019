@@ -63,8 +63,9 @@ public class PreArivedIMP implements PreArived {
         System.out.println(world.getAP());
         Hero hero = null;
         for(Hero h:getSortedHeroWithPathLength(world, preProcess)){
-            if (h.getDodgeAbilities()[0].isReady())
+            if (h.getDodgeAbilities()[0].isReady()) {
                 hero = h;
+            }
         }
         if (hero == null)
             return;
@@ -76,8 +77,6 @@ public class PreArivedIMP implements PreArived {
         for(int i = -range ; i <= range ; i++){
             int temp = range - Math.abs(i);
             for (int j = -temp ; j <= temp ; j++){
-//                if (Math.abs(i + j) == 1)
-//                    continue;
                 int row = hero.getCurrentCell().getRow() + i;
                 int column = hero.getCurrentCell().getColumn() + j;
                 Cell cell = world.getMap().getCell(row, column);
@@ -87,12 +86,13 @@ public class PreArivedIMP implements PreArived {
                     continue;
                 if (world.getMyHero(row, column) != null)
                     continue;
-                if (world.getPathMoveDirections(target, cell).length < distance){
-                    distance = world.manhattanDistance(target, cell);
+
+                Direction[] path = world.getPathMoveDirections(target, cell);
+                if (path.length < distance){
+                    distance = path.length;
                     best = cell;
                 }
-                if (world.getPathMoveDirections(target, cell).length == distance &&
-                        !cell.isInVision()){
+                if (path.length == distance && !cell.isInVision()){
                     best = cell;
                 }
             }
