@@ -1,9 +1,6 @@
 package client.logicAI;
 
-import client.model.Cell;
-import client.model.Hero;
-import client.model.HeroName;
-import client.model.World;
+import client.model.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -57,6 +54,22 @@ public abstract class Values {
                 }
             }
         }
+    }
+
+    public static HeroConstants getHeroConstance(HeroName heroName, World world){
+        for (HeroConstants hero : world.getHeroConstants()){
+            if (hero.getName() == heroName)
+                return hero;
+        }
+        return null;
+    }
+
+    public static AbilityConstants getAbilityConstance(AbilityName abilityName, World world){
+        for (AbilityConstants ability : world.getAbilityConstants()){
+            if (ability.getName() == abilityName)
+                return ability;
+        }
+        return null;
     }
 
     public static World getWorld() {
