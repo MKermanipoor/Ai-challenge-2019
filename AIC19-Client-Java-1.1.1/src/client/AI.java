@@ -83,16 +83,19 @@ public class AI {
 
     public void actionTurn(World world) {
         System.out.println("action started");
-        if (isArived)
-            actionMode.actionTurn(world);
-        else
+        if (!isArived)
             preArived.actionTurn(world, preProcess);
+//        else
+            actionMode.actionTurn(world);
     }
 
     private boolean isGuardianOK(World world){
         for (Hero hero : world.getMyHeroes()){
             if (hero.getName() != HeroName.GUARDIAN)
                 continue;
+            if (hero.getCurrentHP() == 0)
+                continue;
+
             if (hero.getCurrentHP() * 3 < 2 * hero.getMaxHP())
                 return false;
         }
