@@ -1,11 +1,10 @@
 package client.logicAI;
 
-import client.model.Cell;
-import client.model.Direction;
-import client.model.Hero;
-import client.model.World;
+import client.model.*;
+import client.model.Map;
 
 import java.util.*;
+import java.util.function.Consumer;
 
 public class PreArivedIMP implements PreArived {
 
@@ -26,6 +25,9 @@ public class PreArivedIMP implements PreArived {
     public void moveTurn(World world, PreProcess preProcess) {
         Hero[] heroes = world.getMyHeroes();
         int remainingAp = world.getAP();
+        Set<Integer> movedHero = new HashSet<>();
+        List<Cell> isBlocked  = Values.getMyHeroCells(world);
+
         if (!checkMode(world, preProcess)){
             remainingAp -= getSortedHeroWithPathLength(world, preProcess).get(3).getDodgeAbilities()[0].getAPCost();
         }
@@ -38,11 +40,22 @@ public class PreArivedIMP implements PreArived {
                 continue;
             }
             if (remainingAp >= hero.getMoveAPCost()) {
+                remainingAp -= hero.getMoveAPCost();
+                movedHero.add(hero.getId());
+                isBlocked.remove(hero.getCurrentCell());
                 world.moveHero(hero, directions[0]);
                 System.out.println("***************\n" + Values.getHeroTag(hero.getId()) + "\t" + directions[0] + "\n***************\n");
-                remainingAp -= hero.getMoveAPCost();
             }
         }
+
+        movedHero.forEach(new Consumer<Integer>() {
+            @Override
+            public void accept(Integer integer) {
+                Hero hero = world.getHero(integer);
+                Direction d = world.getPathMoveDirections(hero.getCurrentCell(), preProcess.getBestLocation(Values.getHeroTag(integer)), isBlocked)[0];
+                world.moveHero(hero, d);
+            }
+        });
     }
 
     @Override
@@ -50,8 +63,9 @@ public class PreArivedIMP implements PreArived {
         System.out.println(world.getAP());
         Hero hero = null;
         for(Hero h:getSortedHeroWithPathLength(world, preProcess)){
-            if (h.getDodgeAbilities()[0].isReady())
+            if (h.getDodgeAbilities()[0].isReady()) {
                 hero = h;
+            }
         }
         if (hero == null)
             return;
@@ -63,8 +77,6 @@ public class PreArivedIMP implements PreArived {
         for(int i = -range ; i <= range ; i++){
             int temp = range - Math.abs(i);
             for (int j = -temp ; j <= temp ; j++){
-//                if (Math.abs(i + j) == 1)
-//                    continue;
                 int row = hero.getCurrentCell().getRow() + i;
                 int column = hero.getCurrentCell().getColumn() + j;
                 Cell cell = world.getMap().getCell(row, column);
@@ -74,12 +86,13 @@ public class PreArivedIMP implements PreArived {
                     continue;
                 if (world.getMyHero(row, column) != null)
                     continue;
-                if (world.getPathMoveDirections(target, cell).length < distance){
-                    distance = world.manhattanDistance(target, cell);
+
+                Direction[] path = world.getPathMoveDirections(target, cell);
+                if (path.length < distance){
+                    distance = path.length;
                     best = cell;
                 }
-                if (world.getPathMoveDirections(target, cell).length == distance &&
-                        !cell.isInVision()){
+                if (path.length == distance && !cell.isInVision()){
                     best = cell;
                 }
             }
@@ -91,6 +104,16 @@ public class PreArivedIMP implements PreArived {
             System.out.println(hero.getCurrentCell());
             System.out.println(best);
         }
+    }
+
+    @Override
+    public boolean isAried(World world, PreProcess preProcess) {
+
+        for (Hero hero:world.getMyHeroes()){
+            if (hero.getName() == HeroName.HEALER && !hero.getCurrentCell().equals(preProcess.getBestLocation(Values.getHeroTag(hero.getId()))))
+                return false;
+        }
+        return true;
     }
 
     public boolean checkMode(World world, PreProcess preProcess){
