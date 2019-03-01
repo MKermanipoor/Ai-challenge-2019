@@ -40,10 +40,10 @@ public class actionModeIMP implements ActionMode {
                             } else {
                                 switch (dir[0]) {
                                     case DOWN:
-                                        world.castAbility(myHero, AbilityName.GUARDIAN_ATTACK, myRowHero - 1, myColumnHero);
+                                        world.castAbility(myHero, AbilityName.GUARDIAN_ATTACK, myRowHero + 1, myColumnHero);
                                         break;
                                     case UP:
-                                        world.castAbility(myHero, AbilityName.GUARDIAN_ATTACK, myRowHero + 1, myColumnHero);
+                                        world.castAbility(myHero, AbilityName.GUARDIAN_ATTACK, myRowHero - 1, myColumnHero);
                                         break;
                                     case LEFT:
                                         world.castAbility(myHero, AbilityName.GUARDIAN_ATTACK, myRowHero, myColumnHero - 1);
