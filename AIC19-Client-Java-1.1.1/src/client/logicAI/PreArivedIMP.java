@@ -63,7 +63,7 @@ public class PreArivedIMP implements PreArived {
         System.out.println(world.getAP());
         Hero hero = null;
         for(Hero h:getSortedHeroWithPathLength(world, preProcess)){
-            if (h.getDodgeAbilities()[0].isReady()) {
+            if (h.getDodgeAbilities()[0].isReady() && h.getName() == HeroName.HEALER) {
                 hero = h;
             }
         }
