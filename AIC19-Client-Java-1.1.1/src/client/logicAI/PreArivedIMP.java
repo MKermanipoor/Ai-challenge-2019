@@ -116,7 +116,7 @@ public class PreArivedIMP implements PreArived {
         return true;
     }
 
-    public boolean checkMode(World world, PreProcess preProcess){
+    private boolean checkMode(World world, PreProcess preProcess){
         for (Hero hero:world.getMyHeroes()){
             if (world.manhattanDistance(hero.getCurrentCell(), preProcess.getBestLocation(Values.getHeroTag(hero.getId()))) > 0)
                 return false;
