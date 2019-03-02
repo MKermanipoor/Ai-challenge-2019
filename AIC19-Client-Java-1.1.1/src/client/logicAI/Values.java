@@ -28,10 +28,11 @@ public abstract class Values {
         return result[0];
     }
 
-    public static List<Cell> getMyHeroCells(World world) {
+    public static List<Cell> getMyHeroCells(World world, Cell maghsad) {
         List<Cell> result = new ArrayList<>();
         for (Hero hero : world.getMyHeroes())
-            result.add(hero.getCurrentCell());
+            if (maghsad == null || !hero.getCurrentCell().equals(maghsad))
+                result.add(hero.getCurrentCell());
         return result;
     }
 
@@ -56,16 +57,16 @@ public abstract class Values {
         }
     }
 
-    public static HeroConstants getHeroConstance(HeroName heroName, World world){
-        for (HeroConstants hero : world.getHeroConstants()){
+    public static HeroConstants getHeroConstance(HeroName heroName, World world) {
+        for (HeroConstants hero : world.getHeroConstants()) {
             if (hero.getName() == heroName)
                 return hero;
         }
         return null;
     }
 
-    public static AbilityConstants getAbilityConstance(AbilityName abilityName, World world){
-        for (AbilityConstants ability : world.getAbilityConstants()){
+    public static AbilityConstants getAbilityConstance(AbilityName abilityName, World world) {
+        for (AbilityConstants ability : world.getAbilityConstants()) {
             if (ability.getName() == abilityName)
                 return ability;
         }

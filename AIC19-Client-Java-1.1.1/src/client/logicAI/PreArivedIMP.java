@@ -12,8 +12,10 @@ public class PreArivedIMP implements PreArived {
         Collection<Hero> t =new PriorityQueue<>(new Comparator<Hero>() {
             @Override
             public int compare(Hero o1, Hero o2) {
-                int a = world.getPathMoveDirections(o1.getCurrentCell(), destinations.getBestLocation(Values.getHeroTag(o1.getId())), Values.getMyHeroCells(world)).length;
-                int b = world.getPathMoveDirections(o2.getCurrentCell(), destinations.getBestLocation(Values.getHeroTag(o2.getId())), Values.getMyHeroCells(world)).length;
+                Cell ma=destinations.getBestLocation(Values.getHeroTag(o1.getId()));
+                int a = world.getPathMoveDirections(o1.getCurrentCell(), ma, Values.getMyHeroCells(world,ma)).length;
+                Cell mb=destinations.getBestLocation(Values.getHeroTag(o2.getId()));
+                int b = world.getPathMoveDirections(o2.getCurrentCell(), mb, Values.getMyHeroCells(world,mb)).length;
                 return a-b;
             }
         });
@@ -26,15 +28,15 @@ public class PreArivedIMP implements PreArived {
         Hero[] heroes = world.getMyHeroes();
 //        int remainingAp = world.getAP();
         Set<Integer> movedHero = new HashSet<>();
-        List<Cell> isBlocked  = Values.getMyHeroCells(world);
+        List<Cell> isBlocked  = Values.getMyHeroCells(world,null);
 
 //        if (!checkMode(world, preProcess)){
 //            remainingAp -= getSortedHeroWithPathLength(world, preProcess).get(3).getDodgeAbilities()[0].getAPCost();
 //        }
         for (Hero hero : heroes){
-            if (Values.getMyHeroCells(world).size() != 4)
+            if (Values.getMyHeroCells(world,null).size() != 4)
                 System.out.print("\n************\n\n\nerror !!!!!\n************\n\n\n");
-            Direction[] directions = world.getPathMoveDirections(hero.getCurrentCell(), preProcess.getBestLocation(Values.getHeroTag(hero.getId())), Values.getMyHeroCells(world));
+            Direction[] directions = world.getPathMoveDirections(hero.getCurrentCell(), preProcess.getBestLocation(Values.getHeroTag(hero.getId())), Values.getMyHeroCells(world,null));
             if (directions.length == 0) {
                 System.out.println(Values.getHeroTag(hero.getId()) + "Aried");
                 continue;
@@ -52,7 +54,10 @@ public class PreArivedIMP implements PreArived {
             @Override
             public void accept(Integer integer) {
                 Hero hero = world.getHero(integer);
+
                 Direction d = world.getPathMoveDirections(hero.getCurrentCell(), preProcess.getBestLocation(Values.getHeroTag(integer)), isBlocked)[0];
+                if (d==null)
+                    d = world.getPathMoveDirections(hero.getCurrentCell(), preProcess.getBestLocation(Values.getHeroTag(integer)))[0];
                 world.moveHero(hero, d);
             }
         });
