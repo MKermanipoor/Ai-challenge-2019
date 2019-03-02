@@ -17,7 +17,7 @@ public class BackToHeal {
                 if (h.getCurrentHP() * 5 < 3 * h.getMaxHP())
                     remainingAp -= Values.getAbilityConstance(AbilityName.HEALER_HEAL, world).getAPCost();
             }
-            if (remainingAp < guardian.getMoveAPCost() - 1)
+            if (remainingAp < guardian.getMoveAPCost())
                 continue;
 
             Hero target = null;
@@ -26,7 +26,7 @@ public class BackToHeal {
                 if (healer.getName() != HeroName.HEALER)
                     continue;
 
-                if (world.manhattanDistance(healer.getCurrentCell(), guardian.getCurrentCell()) <= Values.getAbilityConstance(AbilityName.HEALER_HEAL, world).getRange()){
+                if (world.manhattanDistance(healer.getCurrentCell(), guardian.getCurrentCell()) <= Values.getAbilityConstance(AbilityName.HEALER_HEAL, world).getRange() - 1){
                     target = null;
                     break;
                 }

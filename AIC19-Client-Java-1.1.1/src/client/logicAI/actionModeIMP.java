@@ -139,8 +139,8 @@ public class actionModeIMP implements ActionMode {
                     continue;
 
                 if (world.manhattanDistance(myHero.getCurrentCell(), enemyHero.getCurrentCell()) > (myHero.getAbility(AbilityName.GUARDIAN_ATTACK).getRange() + myHero.getAbility(AbilityName.GUARDIAN_ATTACK).getAreaOfEffect())) {
-                    if (world.getPathMoveDirections(myHero.getCurrentCell(), enemyHero.getCurrentCell(), Values.getMyHeroCells(world)).length < pathTargetLength) {
-                        pathTargetLength = world.getPathMoveDirections(myHero.getCurrentCell(), enemyHero.getCurrentCell(), Values.getMyHeroCells(world)).length;
+                    if (world.getPathMoveDirections(myHero.getCurrentCell(), enemyHero.getCurrentCell()).length < pathTargetLength) {
+                        pathTargetLength = world.getPathMoveDirections(myHero.getCurrentCell(), enemyHero.getCurrentCell()).length;
                         target = enemyHero;
                     }
                 } else {
@@ -156,12 +156,12 @@ public class actionModeIMP implements ActionMode {
             int remainingAp = world.getAP() - 2 * myHero.getAbility(AbilityName.GUARDIAN_ATTACK).getAPCost();
 
             if (remainingAp >= moveCounterAttackAp) {
-                Direction[] directions = world.getPathMoveDirections(myHero.getCurrentCell(), target.getCurrentCell(), Values.getMyHeroCells(world));
+                Direction[] directions = world.getPathMoveDirections(myHero.getCurrentCell(), target.getCurrentCell());
                 if (directions != null && directions.length != 0)
                     world.moveHero(myHero, directions[0]);
             }
         }
     }
 
-    
+
 }
