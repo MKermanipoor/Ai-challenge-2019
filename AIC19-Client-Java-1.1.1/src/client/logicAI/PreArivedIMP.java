@@ -24,13 +24,13 @@ public class PreArivedIMP implements PreArived {
     @Override
     public void moveTurn(World world, PreProcess preProcess) {
         Hero[] heroes = world.getMyHeroes();
-        int remainingAp = world.getAP();
+//        int remainingAp = world.getAP();
         Set<Integer> movedHero = new HashSet<>();
         List<Cell> isBlocked  = Values.getMyHeroCells(world);
 
-        if (!checkMode(world, preProcess)){
-            remainingAp -= getSortedHeroWithPathLength(world, preProcess).get(3).getDodgeAbilities()[0].getAPCost();
-        }
+//        if (!checkMode(world, preProcess)){
+//            remainingAp -= getSortedHeroWithPathLength(world, preProcess).get(3).getDodgeAbilities()[0].getAPCost();
+//        }
         for (Hero hero : heroes){
             if (Values.getMyHeroCells(world).size() != 4)
                 System.out.print("\n************\n\n\nerror !!!!!\n************\n\n\n");
@@ -39,13 +39,13 @@ public class PreArivedIMP implements PreArived {
                 System.out.println(Values.getHeroTag(hero.getId()) + "Aried");
                 continue;
             }
-            if (remainingAp >= hero.getMoveAPCost()) {
-                remainingAp -= hero.getMoveAPCost();
+//            if (remainingAp >= hero.getMoveAPCost()) {
+//                remainingAp -= hero.getMoveAPCost();
                 movedHero.add(hero.getId());
                 isBlocked.remove(hero.getCurrentCell());
                 world.moveHero(hero, directions[0]);
                 System.out.println("***************\n" + Values.getHeroTag(hero.getId()) + "\t" + directions[0] + "\n***************\n");
-            }
+//            }
         }
 
         movedHero.forEach(new Consumer<Integer>() {
@@ -63,7 +63,7 @@ public class PreArivedIMP implements PreArived {
         System.out.println(world.getAP());
         Hero hero = null;
         for(Hero h:getSortedHeroWithPathLength(world, preProcess)){
-            if (h.getDodgeAbilities()[0].isReady()) {
+            if (h.getDodgeAbilities()[0].isReady() && h.getName() == HeroName.HEALER) {
                 hero = h;
             }
         }
@@ -110,10 +110,10 @@ public class PreArivedIMP implements PreArived {
     public boolean isAried(World world, PreProcess preProcess) {
 
         for (Hero hero:world.getMyHeroes()){
-            if (hero.getName() == HeroName.HEALER && !hero.getCurrentCell().equals(preProcess.getBestLocation(Values.getHeroTag(hero.getId()))))
-                return false;
+            if (hero.getName() == HeroName.HEALER && hero.getCurrentCell().equals(preProcess.getBestLocation(Values.getHeroTag(hero.getId()))))
+                return true;
         }
-        return true;
+        return false;
     }
 
     public boolean checkMode(World world, PreProcess preProcess){

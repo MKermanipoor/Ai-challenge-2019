@@ -1,10 +1,10 @@
 package client;
 
 import client.logicAI.*;
-import client.model.*;
-
-import java.util.HashMap;
-import java.util.function.BiConsumer;
+import client.model.Direction;
+import client.model.Hero;
+import client.model.HeroName;
+import client.model.World;
 
 
 public class AI {
@@ -19,8 +19,9 @@ public class AI {
     enum Mode {
         ACTION,
         BACK_TO_HEAL;
-        public Mode change(){
-            switch (this){
+
+        public Mode change() {
+            switch (this) {
                 case ACTION:
                     return BACK_TO_HEAL;
                 case BACK_TO_HEAL:
@@ -52,16 +53,19 @@ public class AI {
         }
     }
 
-    boolean first = false;
-    boolean isArived = false;
+    private boolean isArived = false;
+    private boolean first = true;
+    private boolean isFirstMove = true;
 
     public void moveTurn(World world) {
 
         System.out.println("move started");
-        if (!first)
+        if (first) {
             Values.initial(world);
+            first = false;
+        }
 
-        if (isArived){
+        if (isArived) {
             checkHealerAndMove(world);
         }
         if (!isArived && !preArived.isAried(world, preProcess)) {
@@ -70,37 +74,51 @@ public class AI {
         } else {
             isArived = true;
             if (isGuardianOK(world)) {
+                mode = Mode.ACTION;
                 actionMode.moveTurn(world);
                 System.out.println("Action mode");
-            }else {
-                backToHeal.moveTurn(world);
-                System.out.println("Heal mode");
+            } else {
+                if (isFirstMove)
+                    mode = mode.change();
+                switch (mode) {
+                    case BACK_TO_HEAL:
+                        backToHeal.moveTurn(world);
+                        System.out.println("Heal mode");
+                        break;
+                    case ACTION:
+                        actionMode.moveTurn(world);
+                        System.out.println("Action mode");
+                        break;
+                }
             }
         }
+        isFirstMove = false;
     }
-
-    boolean firstGorize = false;
 
     public void actionTurn(World world) {
         System.out.println("action started");
-        if (isArived)
-            actionMode.actionTurn(world);
-        else
-            preArived.actionTurn(world, preProcess);
+//        if (!isArived)
+//            preArived.actionTurn(world, preProcess);
+//        else
+        actionMode.actionTurn(world);
+        isFirstMove = true;
     }
 
-    private boolean isGuardianOK(World world){
-        for (Hero hero : world.getMyHeroes()){
+    private boolean isGuardianOK(World world) {
+        for (Hero hero : world.getMyHeroes()) {
             if (hero.getName() != HeroName.GUARDIAN)
                 continue;
-            if (hero.getCurrentHP() * 3 < 2 * hero.getMaxHP())
+            if (hero.getCurrentHP() == 0)
+                continue;
+
+            if (hero.getCurrentHP() * 5 < 3 * hero.getMaxHP())
                 return false;
         }
         return true;
     }
 
-    private void checkHealerAndMove(World world){
-        for(Hero healer : world.getMyHeroes()){
+    private void checkHealerAndMove(World world) {
+        for (Hero healer : world.getMyHeroes()) {
             if (healer.getName() != HeroName.HEALER)
                 continue;
 
