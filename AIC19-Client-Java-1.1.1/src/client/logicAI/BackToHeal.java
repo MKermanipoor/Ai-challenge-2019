@@ -8,8 +8,16 @@ public class BackToHeal {
             if (guardian.getName() != HeroName.GUARDIAN)
                 continue;
 
-            int remainingAp = world.getAP() - 2 * Values.getAbilityConstance(AbilityName.HEALER_HEAL, world).getAPCost();
-            if (remainingAp < guardian.getMoveAPCost())
+            int remainingAp = world.getAP();
+            for(Hero h:world.getMyHeroes()){
+                if (h.getName() != HeroName.GUARDIAN)
+                    continue;
+                if (h.getCurrentHP() == 0)
+                    continue;
+                if (h.getCurrentHP() * 5 < 3 * h.getMaxHP())
+                    remainingAp -= Values.getAbilityConstance(AbilityName.HEALER_HEAL, world).getAPCost();
+            }
+            if (remainingAp < guardian.getMoveAPCost() - 1)
                 continue;
 
             Hero target = null;
