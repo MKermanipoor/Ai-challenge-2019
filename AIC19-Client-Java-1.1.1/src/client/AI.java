@@ -1,10 +1,7 @@
 package client;
 
 import client.logicAI.*;
-import client.model.Direction;
-import client.model.Hero;
-import client.model.HeroName;
-import client.model.World;
+import client.model.*;
 
 
 public class AI {
@@ -126,8 +123,8 @@ public class AI {
                 continue;
             if (healer.getCurrentCell().equals(preProcess.getBestLocation(Values.getHeroTag(healer.getId()))))
                 continue;
-
-            Direction[] path = world.getPathMoveDirections(healer.getCurrentCell(), preProcess.getBestLocation(Values.getHeroTag(healer.getId())), Values.getMyHeroCells(world));
+            Cell onjayeMaghsad= preProcess.getBestLocation(Values.getHeroTag(healer.getId()));
+            Direction[] path = world.getPathMoveDirections(healer.getCurrentCell(),onjayeMaghsad, Values.getMyHeroCells(world,onjayeMaghsad));
             if (path == null || path.length == 0)
                 continue;
 
